@@ -12,7 +12,7 @@ import android.os.IBinder
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.example.umbrella.data.AccelerometerDataStore
-import com.example.umbrella.data.AccelerometerReading
+import com.example.umbrella.models.AccelerometerReading
 
 class AccelerometerForegroundService : Service(), SensorEventListener {
 

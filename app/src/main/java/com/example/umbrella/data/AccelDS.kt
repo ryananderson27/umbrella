@@ -1,5 +1,6 @@
 package com.example.umbrella.data
 
+import com.example.umbrella.models.AccelerometerReading
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

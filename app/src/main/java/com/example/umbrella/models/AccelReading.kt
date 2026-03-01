@@ -1,4 +1,4 @@
-package com.example.umbrella.data
+package com.example.umbrella.models
 
 data class AccelerometerReading(
     val x: Float,
