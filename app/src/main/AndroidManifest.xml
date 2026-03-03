@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Umbrella">
         <service
-            android:name=".AccelerometerForegroundService"
+            android:name=".data.AccelerometerForegroundService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="health"/>

@@ -20,8 +20,6 @@ class UserWeatherDataStore(private val context: Context) {
 
     companion object {
         private val LOCATION_NAME = stringPreferencesKey("location_name")
-        private val LATITUDE = doublePreferencesKey("latitude")
-        private val LONGITUDE = doublePreferencesKey("longitude")
         private val HAS_UMBRELLA = booleanPreferencesKey("has_umbrella")
         private val HAS_SNOW_SHOES = booleanPreferencesKey("has_snow_shoes")
     }
@@ -29,18 +27,14 @@ class UserWeatherDataStore(private val context: Context) {
     val prefsFlow: Flow<UserWeatherPrefs> = context.userWeatherDataStore.data.map { prefs ->
         UserWeatherPrefs(
             locationName = prefs[LOCATION_NAME] ?: "",
-            latitude = prefs[LATITUDE] ?: 0.0,
-            longitude = prefs[LONGITUDE] ?: 0.0,
             hasUmbrella = prefs[HAS_UMBRELLA] ?: false,
             hasSnowShoes = prefs[HAS_SNOW_SHOES] ?: false
         )
     }
 
-    suspend fun saveLocation(locationName: String, latitude: Double, longitude: Double) {
+    suspend fun saveLocation(locationName: String) {
         context.userWeatherDataStore.edit { prefs ->
             prefs[LOCATION_NAME] = locationName
-            prefs[LATITUDE] = latitude
-            prefs[LONGITUDE] = longitude
         }
     }
 
@@ -56,17 +50,9 @@ class UserWeatherDataStore(private val context: Context) {
         }
     }
 
-    suspend fun saveAll(
-        locationName: String,
-        latitude: Double,
-        longitude: Double,
-        hasUmbrella: Boolean,
-        hasSnowShoes: Boolean
-    ) {
+    suspend fun saveAll(locationName: String, hasUmbrella: Boolean, hasSnowShoes: Boolean) {
         context.userWeatherDataStore.edit { prefs ->
             prefs[LOCATION_NAME] = locationName
-            prefs[LATITUDE] = latitude
-            prefs[LONGITUDE] = longitude
             prefs[HAS_UMBRELLA] = hasUmbrella
             prefs[HAS_SNOW_SHOES] = hasSnowShoes
         }

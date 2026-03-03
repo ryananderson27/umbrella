@@ -9,6 +9,4 @@ Data class representing core atmospheric measurements.*
 @version 1.0*/
 data class MainData(
     val temp: Double? = null,
-    val humidity: Int? = null,
-    val pressure: Int? = null
 )

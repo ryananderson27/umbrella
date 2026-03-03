@@ -8,5 +8,4 @@ Describes the weather condition and associated iconography.*
 @version 1.0*/
 data class WeatherDesc(
     val description: String? = null,
-    val icon: String? = null
 )

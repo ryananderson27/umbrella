@@ -15,6 +15,5 @@ data class WeatherResponse(
     val main: MainData? = null,
     val weather: List<WeatherDesc>? = null,
     val wind: WindData? = null,
-    val sys: SysData? = null,
     val rain: Rain? = null
 )
