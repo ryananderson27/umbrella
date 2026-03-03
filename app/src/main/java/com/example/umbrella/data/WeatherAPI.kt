@@ -1,6 +1,5 @@
 package com.example.umbrella.data
 
-import com.example.umbrella.models.CurrentWeather
 import com.example.umbrella.models.WeatherResponse
 import retrofit2.http.GET
 import retrofit2.http.Query

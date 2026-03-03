@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import androidx.core.app.NotificationCompat
 
 object AccelerometerNotificationHelper {
@@ -15,7 +14,7 @@ object AccelerometerNotificationHelper {
         val channel = NotificationChannel(
             CHANNEL_ID,
             "Accelerometer Foreground Service",
-            NotificationManager.IMPORTANCE_LOW
+            NotificationManager.IMPORTANCE_HIGH
         )
         val manager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -27,6 +26,8 @@ object AccelerometerNotificationHelper {
             .setContentTitle("Accelerometer Service")
             .setContentText(contentText)
             .setSmallIcon(android.R.drawable.ic_menu_compass)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
             .setOngoing(true)
             .build()
     }

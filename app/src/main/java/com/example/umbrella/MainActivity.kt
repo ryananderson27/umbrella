@@ -26,7 +26,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import com.example.umbrella.data.AccelerometerForegroundService
 import com.example.umbrella.ui.theme.UmbrellaTheme
+import com.example.umbrella.viewmodels.WeatherViewModel
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            MyApplicationApp()
+        }
+    }
+}
 
 @PreviewScreenSizes
 @Composable
@@ -38,6 +51,7 @@ fun MyApplicationApp() {
     var isDarkMode by rememberSaveable {
         mutableStateOf(false)
     }
+
 
     UmbrellaTheme(
         darkTheme = isDarkMode

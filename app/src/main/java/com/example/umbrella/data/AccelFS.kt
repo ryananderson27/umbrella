@@ -1,4 +1,4 @@
-package com.example.umbrella
+package com.example.umbrella.data
 
 import android.app.Service
 import android.content.Context
@@ -11,8 +11,10 @@ import android.hardware.SensorManager
 import android.os.IBinder
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
-import com.example.umbrella.data.AccelerometerDataStore
-import com.example.umbrella.models.AccelerometerReading
+import com.example.umbrella.AccelerometerNotificationHelper
+import com.example.umbrella.data.AccelDS
+import com.example.umbrella.models.AccelReading
+
 
 class AccelerometerForegroundService : Service(), SensorEventListener {
 
@@ -36,7 +38,7 @@ class AccelerometerForegroundService : Service(), SensorEventListener {
             ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
         )
 
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
         accelerometer?.let { sensor ->
@@ -62,14 +64,14 @@ class AccelerometerForegroundService : Service(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type != Sensor.TYPE_ACCELEROMETER) return
 
-        val reading = AccelerometerReading(
+        val reading = AccelReading(
             x = event.values[0],
             y = event.values[1],
             z = event.values[2],
             timestamp = System.currentTimeMillis()
         )
 
-        AccelerometerDataStore.update(reading)
+        AccelDS.update(reading)
 
         val text = "x=${"%.2f".format(reading.x)}  y=${"%.2f".format(reading.y)}  z=${"%.2f".format(reading.z)}"
         AccelerometerNotificationHelper.updateNotification(this, text)
