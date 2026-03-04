@@ -17,13 +17,11 @@ private val Context.userWeatherDataStore: DataStore<Preferences> by preferencesD
 )
 
 class UserWeatherDataStore(private val context: Context) {
-
     companion object {
         private val LOCATION_NAME = stringPreferencesKey("location_name")
         private val HAS_UMBRELLA = booleanPreferencesKey("has_umbrella")
         private val HAS_SNOW_SHOES = booleanPreferencesKey("has_snow_shoes")
     }
-
     val prefsFlow: Flow<UserWeatherPrefs> = context.userWeatherDataStore.data.map { prefs ->
         UserWeatherPrefs(
             locationName = prefs[LOCATION_NAME] ?: "",
@@ -33,21 +31,15 @@ class UserWeatherDataStore(private val context: Context) {
     }
 
     suspend fun saveLocation(locationName: String) {
-        context.userWeatherDataStore.edit { prefs ->
-            prefs[LOCATION_NAME] = locationName
-        }
+        context.userWeatherDataStore.edit { prefs -> prefs[LOCATION_NAME] = locationName }
     }
 
     suspend fun setHasUmbrella(value: Boolean) {
-        context.userWeatherDataStore.edit { prefs ->
-            prefs[HAS_UMBRELLA] = value
-        }
+        context.userWeatherDataStore.edit { prefs -> prefs[HAS_UMBRELLA] = value }
     }
 
     suspend fun setHasSnowShoes(value: Boolean) {
-        context.userWeatherDataStore.edit { prefs ->
-            prefs[HAS_SNOW_SHOES] = value
-        }
+        context.userWeatherDataStore.edit { prefs -> prefs[HAS_SNOW_SHOES] = value }
     }
 
     suspend fun saveAll(locationName: String, hasUmbrella: Boolean, hasSnowShoes: Boolean) {

@@ -41,9 +41,6 @@ class WeatherViewModel(private val api: WeatherRepository, application: Applicat
     private val _lastUpdated = MutableStateFlow<String?>(null)
     val lastUpdated: StateFlow<String?> = _lastUpdated.asStateFlow()
 
-    private var lastLat: Double? = null
-    private var lastLon: Double? = null
-
     init {
         observeAccelerometer()
     }
@@ -52,50 +49,41 @@ class WeatherViewModel(private val api: WeatherRepository, application: Applicat
         viewModelScope.launch {
             AccelDS.latest.collectLatest { reading ->
                 _accelerometerData.value = reading?.x
+                checkConditions()
             }
         }
     }
 
-    fun checkConditions(){
+    fun checkConditions() {
         val hasSnowBoots = userPrefs.value.hasSnowShoes
-        val hasUmbrella = userPrefs.value.hasSnowShoes
-        viewModelScope.launch {
-            if(accelerometerData.value!! > 6.0f || accelerometerData.value!! < -6.0f) {
-                if(weatherInfo.value == "snow"){
-                    if(hasSnowBoots){
-                        _conditionData.value = "Get your snow boots. It's snowy!"
-                    } else {
-                        _conditionData.value = "Buy some snow boots. It's snowy!"
-                    }
+        val hasUmbrella = userPrefs.value.hasUmbrella
+        val accel = accelerometerData.value ?: return
+        val weather = weatherInfo.value.lowercase()
 
-                } else if(weatherInfo.value == "rain"){
-                    if(hasUmbrella){
-                        _conditionData.value = "Get your umbrella. It's rainy!"
-                    } else {
-                        _conditionData.value = "Buy some snow boots. It's rainy!"
-                    }
-                } else {
-                    _conditionData.value = "It's a nice day!"
+        if (accel > 3.0f || accel < -3.0f) {
+            _conditionData.value =
+                when {
+                    "snow" in weather ->
+                        if (hasSnowBoots) "Get your snow boots. It's snowy!"
+                        else "Buy some snow boots. It's snowy!"
+                    "rain" in weather ->
+                        if (hasUmbrella) "Get your umbrella. It's rainy!"
+                        else "Buy an umbrella. It's rainy!"
+                    else -> "It's a nice day!"
                 }
-            }
         }
     }
 
     fun fetchData(lat: Double, lon: Double) {
-        lastLat = lat
-        lastLon = lon
 
         viewModelScope.launch {
             _weatherInfo.value = "Loading weather..."
-
             try {
                 val current = withContext(Dispatchers.IO) {
                     api.fetchCurrentWeather(lat, lon)
                 }
-
-                // Adjust this string to match your WeatherResponse fields
-                _weatherInfo.value = "Temp: ${current.main?.temp}°, ${current.weather?.firstOrNull()?.description ?: "No description"}"
-
+                _weatherInfo.value = current.weather?.firstOrNull()?.description ?: "No description"
+                checkConditions()
                 _lastUpdated.value = getFormattedTime()
             } catch (e: Exception) {
                 e.printStackTrace()

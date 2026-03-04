@@ -1,5 +1,4 @@
 package com.example.umbrella.viewmodels
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.umbrella.data.UserWeatherDataStore
@@ -13,7 +12,7 @@ class UserViewModel(private val dataStore: UserWeatherDataStore) : ViewModel() {
     val prefs = dataStore.prefsFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = UserWeatherPrefs("",  false, false)
+        initialValue = UserWeatherPrefs("", false, false)
     )
 
     fun setHasUmbrella(value: Boolean) {

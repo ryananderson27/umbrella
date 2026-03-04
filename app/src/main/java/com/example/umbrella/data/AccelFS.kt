@@ -17,36 +17,22 @@ import com.example.umbrella.models.AccelReading
 
 
 class AccelerometerForegroundService : Service(), SensorEventListener {
-
     private var sensorManager: SensorManager? = null
     private var accelerometer: Sensor? = null
 
     override fun onCreate() {
         super.onCreate()
-
         AccelerometerNotificationHelper.createChannel(this)
-
-        val notification = AccelerometerNotificationHelper.buildNotification(
-            this,
-            "Collecting accelerometer data..."
-        )
-
+        val notification = AccelerometerNotificationHelper.buildNotification(this, "Collecting accelerometer data.")
         ServiceCompat.startForeground(
             this,
             AccelerometerNotificationHelper.NOTIFICATION_ID,
             notification,
             ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
         )
-
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-
-        accelerometer?.let { sensor ->
-            sensorManager?.registerListener(
-                this,
-                sensor,
-                SensorManager.SENSOR_DELAY_NORMAL
-            )
+        accelerometer?.let { sensor -> sensorManager?.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
         }
     }
 
@@ -63,22 +49,19 @@ class AccelerometerForegroundService : Service(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type != Sensor.TYPE_ACCELEROMETER) return
-
         val reading = AccelReading(
             x = event.values[0],
             y = event.values[1],
             z = event.values[2],
             timestamp = System.currentTimeMillis()
         )
-
         AccelDS.update(reading)
-
         val text = "x=${"%.2f".format(reading.x)}  y=${"%.2f".format(reading.y)}  z=${"%.2f".format(reading.z)}"
         AccelerometerNotificationHelper.updateNotification(this, text)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // No-op
+        // No no, no do
     }
 
     companion object {
