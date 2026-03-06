@@ -16,8 +16,7 @@ object AccelerometerNotificationHelper {
             "Accelerometer Foreground Service",
             NotificationManager.IMPORTANCE_HIGH
         )
-        val manager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(channel)
     }
 
@@ -33,8 +32,7 @@ object AccelerometerNotificationHelper {
     }
 
     fun updateNotification(context: Context, contentText: String) {
-        val manager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(NOTIFICATION_ID, buildNotification(context, contentText))
     }
 }

@@ -45,31 +45,22 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         AccelerometerForegroundService.start(this)
         enableEdgeToEdge()
 
         // Initialize ViewModels
         val repo = WeatherRepository()
         val weatherFactory = WeatherViewModelFactory(repo, application)
-        weatherViewModel =
-            ViewModelProvider(this, weatherFactory)[WeatherViewModel::class.java]
-
+        weatherViewModel = ViewModelProvider(this, weatherFactory)[WeatherViewModel::class.java]
         val dataStore = UserWeatherDataStore(applicationContext)
         val userFactory = UserViewModelFactory(dataStore)
-        userViewModel =
-            ViewModelProvider(this, userFactory)[UserViewModel::class.java]
+        userViewModel = ViewModelProvider(this, userFactory)[UserViewModel::class.java]
 
-        requestPermissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
+        requestPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
         )
 
         setContent {
             var isDarkMode by rememberSaveable { mutableStateOf(false) }
-
             UmbrellaTheme(darkTheme = isDarkMode) {
                 WeatherDisplay(
                     weatherViewModel = weatherViewModel,
@@ -83,20 +74,13 @@ class MainActivity : ComponentActivity() {
 
     private fun getLocationAndFetch() {
         val fusedClient = LocationServices.getFusedLocationProviderClient(this)
-
         try {
             val cts = CancellationTokenSource()
-
             fusedClient.getCurrentLocation(
                 Priority.PRIORITY_HIGH_ACCURACY,
                 cts.token
             ).addOnSuccessListener { location: Location? ->
                 if (location != null) {
-                    Log.d(
-                        "Umbrella",
-                        "Fetched Location: ${location.latitude}, ${location.longitude}"
-                    )
-
                     weatherViewModel.fetchData(
                         lat = location.latitude,
                         lon = location.longitude

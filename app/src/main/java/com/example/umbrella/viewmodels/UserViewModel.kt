@@ -26,16 +26,4 @@ class UserViewModel(private val dataStore: UserWeatherDataStore) : ViewModel() {
             dataStore.setHasSnowShoes(value)
         }
     }
-
-    fun saveLocation(name: String) {
-        viewModelScope.launch {
-            dataStore.saveLocation(name)
-        }
-    }
-
-    fun clearAll() {
-        viewModelScope.launch {
-            dataStore.clearAll()
-        }
-    }
 }

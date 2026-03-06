@@ -86,9 +86,7 @@ class WeatherViewModel(private val api: WeatherRepository, application: Applicat
                 val current = withContext(Dispatchers.IO) {
                     api.fetchCurrentWeather(lat, lon)
                 }
-                userWeatherDataStore.saveLocation(
-                    current.name ?: "${"%.4f".format(lat)},${"%.4f".format(lon)}"
-                )
+                userWeatherDataStore.saveLocation(current.name ?: "${"%.4f".format(lat)},${"%.4f".format(lon)}")
 
                 _weatherInfo.value = current.weather?.firstOrNull()?.description ?: "No description"
                 checkConditions()

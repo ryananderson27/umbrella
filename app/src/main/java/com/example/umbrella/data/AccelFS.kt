@@ -17,30 +17,21 @@ import com.example.umbrella.models.AccelReading
 
 
 class AccelerometerForegroundService : Service(), SensorEventListener {
-
     private var sensorManager: SensorManager? = null
     private var accelerometer: Sensor? = null
 
     override fun onCreate() {
         super.onCreate()
-
         AccelerometerNotificationHelper.createChannel(this)
-
-        val notification = AccelerometerNotificationHelper.buildNotification(
-            this,
-            "Collecting accelerometer data..."
-        )
-
+        val notification = AccelerometerNotificationHelper.buildNotification(this, "Collecting accelerometer data")
         ServiceCompat.startForeground(
             this,
             AccelerometerNotificationHelper.NOTIFICATION_ID,
             notification,
             ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
         )
-
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-
         accelerometer?.let { sensor ->
             sensorManager?.registerListener(
                 this,
@@ -78,18 +69,13 @@ class AccelerometerForegroundService : Service(), SensorEventListener {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // No-op
+        // nothing
     }
 
     companion object {
         fun start(context: Context) {
             val intent = Intent(context, AccelerometerForegroundService::class.java)
             ContextCompat.startForegroundService(context, intent)
-        }
-
-        fun stop(context: Context) {
-            val intent = Intent(context, AccelerometerForegroundService::class.java)
-            context.stopService(intent)
         }
     }
 }

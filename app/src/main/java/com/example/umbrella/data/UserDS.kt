@@ -17,7 +17,6 @@ private val Context.userWeatherDataStore: DataStore<Preferences> by preferencesD
 )
 
 class UserWeatherDataStore(private val context: Context) {
-
     companion object {
         private val LOCATION_NAME = stringPreferencesKey("location_name")
         private val HAS_UMBRELLA = booleanPreferencesKey("has_umbrella")
@@ -47,14 +46,6 @@ class UserWeatherDataStore(private val context: Context) {
     suspend fun setHasSnowShoes(value: Boolean) {
         context.userWeatherDataStore.edit { prefs ->
             prefs[HAS_SNOW_SHOES] = value
-        }
-    }
-
-    suspend fun saveAll(locationName: String, hasUmbrella: Boolean, hasSnowShoes: Boolean) {
-        context.userWeatherDataStore.edit { prefs ->
-            prefs[LOCATION_NAME] = locationName
-            prefs[HAS_UMBRELLA] = hasUmbrella
-            prefs[HAS_SNOW_SHOES] = hasSnowShoes
         }
     }
 
