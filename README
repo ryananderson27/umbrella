@@ -1,0 +1,49 @@
+Project Members: Kyle Chang and Ryan Anderson
+
+2. How are you using your sensors to intelligently react to the user's environment and "assist" the user?
+
+We are monitoring the accelerator sensor of the phone, specifically in the X direction,
+along with their location and local weather data. We also ask the user to input whether
+they own an umbrella or snow boots. We check in the X value spikes to a certain number
+the user is getting up and moving, possibly outside. When this happens, we check the
+user’s local weather using their location and the OpenWeather API. So if the user goes
+outside and it’s snowy, the app reminds them to “get their snow boots” or, if they don’t
+own snow boots, to “buy some snow boots.” The same things for the umbrella if it is raining.
+Just a reminder app so you go outside prepared.
+
+3. Any instructions that we should know on how to run/use your application?
+
+Create an OpenWeather account so you can use their API to retrieve current weather data for
+a given location, and follow the documentation for each application to set up API access.
+Add your API key to the root project directory in local.properties using the format
+OPENWEATHER_API_KEY=.... After adding the key, run a Clean and Build so the settings load
+correctly. Complete this step early, because API keys can take up to six hours to become active.
+Set the user location to a city location, not a specific place in the city. Boot up the app,
+you will be asked to give permission for the app to track your location. Please allow it to do
+so. Then go to the settings and toggle whether you have an umbrella and snow shoes. Now you're done!
+
+
+
+4. Any references/resources used. I highly doubt this section will be blank,
+   since there is so much we didn't cover in this class!
+
+For the location and OpenWeather API, we repurposed a lot of the code we learned from Project 3,
+the “Weather App.” For the accelerometer sensors, so getting the accelerometer X value as a
+Foreground service, we used the following sources to construct it:
+https://developer.android.com/develop/sensors-and-location/sensors/sensors_overview
+https://developer.android.com/develop/background-work/services/fgs
+
+Foreground services require a persistent notification so the user knows the service is running.
+We originally planned to use Android’s notification system for user-facing updates, but due to
+time and technical constraints, we moved those updates into the View/ViewModel instead. Even if
+we are not using custom notification updates, the foreground-service notification code still
+must remain in the app because Android requires a notification for the foreground service to
+run. We used the following resources to code that:
+https://developer.android.com/develop/ui/views/notifications/build-notification
+https://developer.android.com/develop/background-work/services/fgs/launch
+
+In order to store useful information about our user that is integral for the functioning of t
+he app, we use DataStore. We store the user’s location, whether they own snow boots, and
+whether they own an umbrella. To code this, we used the following resources:
+https://developer.android.com/topic/libraries/architecture/datastore
+https://android-developers.googleblog.com/2020/09/prefer-storing-data-with-jetpack.html

@@ -1,18 +1,17 @@
 package com.example.umbrella.viewmodels
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.umbrella.data.WeatherRepository
+import com.example.umbrella.data.UserWeatherDataStore
 
-class WeatherViewModelFactory(
-    private val repo: WeatherRepository,
-    private val app: Application
+class UserViewModelFactory(
+    private val dataStore: UserWeatherDataStore
 ) : ViewModelProvider.Factory {
+
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(WeatherViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return WeatherViewModel(repo, app) as T
+            return UserViewModel(dataStore) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
