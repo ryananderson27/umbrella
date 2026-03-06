@@ -1,5 +1,6 @@
 package com.example.umbrella
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,16 +25,21 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.umbrella.data.AccelerometerForegroundService
 import com.example.umbrella.ui.theme.UmbrellaTheme
 import com.example.umbrella.viewmodels.WeatherViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.umbrella.data.WeatherRepository
+import com.example.umbrella.viewmodels.WeatherViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AccelerometerForegroundService.start(this)
         enableEdgeToEdge()
         setContent {
             MyApplicationApp()
@@ -41,58 +47,39 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@PreviewScreenSizes
 @Composable
 fun MyApplicationApp() {
-    var currentDestination by rememberSaveable {
-        mutableStateOf(AppDestinations.HOME)
-    }
+    val context = LocalContext.current.applicationContext as Application
+    val weatherRepository = WeatherRepository() // Replace with actual repo if needed
 
-    var isDarkMode by rememberSaveable {
-        mutableStateOf(false)
-    }
+    val weatherViewModel: WeatherViewModel = viewModel(
+        factory = WeatherViewModelFactory(weatherRepository, context)
+    )
 
+    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
+    var isDarkMode by rememberSaveable { mutableStateOf(false) }
 
-    UmbrellaTheme(
-        darkTheme = isDarkMode
-    ) {
+    UmbrellaTheme(darkTheme = isDarkMode) {
         NavigationSuiteScaffold(
             navigationSuiteItems = {
-                AppDestinations.entries.forEach {
+                AppDestinations.entries.forEach { item ->
                     item(
-                        icon = {
-                            Icon(
-                                imageVector = it.icon,
-                                contentDescription = it.label
-                            )
-                        },
-                        label = { Text(it.label) },
-                        selected = it == currentDestination,
-                        onClick = { currentDestination = it }
+                        icon = { Icon(item.icon, contentDescription = item.label) },
+                        label = { Text(item.label) },
+                        selected = item == currentDestination,
+                        onClick = { currentDestination = item }
                     )
                 }
             }
         ) {
-            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                when (currentDestination) {
-                    AppDestinations.HOME ->
-                        HomeScreen(Modifier.padding(innerPadding))
-
-                    AppDestinations.CONTEXT ->
-                        ContextScreen(Modifier.padding(innerPadding))
-
-                    AppDestinations.PRIVACY ->
-                        PrivacyScreen(Modifier.padding(innerPadding))
-
-                    AppDestinations.SETTINGS ->
-                        SettingsScreen(
-                            modifier = Modifier.padding(innerPadding),
-                            isDarkMode = isDarkMode,
-                            onToggleTheme = {
-                                isDarkMode = !isDarkMode
-                            }
-                        )
-                }
+            when (currentDestination) {
+                AppDestinations.HOME -> HomeScreen(viewModel = weatherViewModel)
+                AppDestinations.CONTEXT -> ContextScreen()
+                AppDestinations.PRIVACY -> PrivacyScreen()
+                AppDestinations.SETTINGS -> SettingsScreen(
+                    isDarkMode = isDarkMode,
+                    onToggleTheme = { isDarkMode = !isDarkMode }
+                )
             }
         }
     }
@@ -111,44 +98,44 @@ enum class AppDestinations(
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    weatherInfo: String = "Loading weather...",   // placeholder, will be updated by ViewModel
-    accelerometerData: String = "Waiting for sensor..." // placeholder
+    viewModel: WeatherViewModel
 ) {
+    val weather by viewModel.weatherInfo.collectAsState()
+    val accelerometer by viewModel.accelerometerData.collectAsState(initial = 0f)
+    val condition by viewModel.conditionData.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Weather Info Card
-        Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "Weather Information",
-                    style = MaterialTheme.typography.titleLarge
-                )
+                Text("Weather Information", style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = weatherInfo)
+                Text(weather)
             }
         }
 
-        // Accelerometer Info Card
-        Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "Accelerometer Data",
-                    style = MaterialTheme.typography.titleLarge
-                )
+                Text("Accelerometer Data", style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = accelerometerData)
+                Text("X-axis: $accelerometer")
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Condition Advice", style = MaterialTheme.typography.titleLarge)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(condition)
             }
         }
     }
 }
+
 
 @Composable
 fun ContextScreen(modifier: Modifier = Modifier) {

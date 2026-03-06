@@ -58,8 +58,11 @@ class WeatherViewModel(private val api: WeatherRepository, application: Applicat
 
     fun checkConditions(){
         val hasSnowBoots = userPrefs.value.hasSnowShoes
-        val hasUmbrella = userPrefs.value.hasSnowShoes
+        val hasUmbrella = userPrefs.value.hasUmbrella
         viewModelScope.launch {
+            if(accelerometerData.value == null){
+                return@launch
+            }
             if(accelerometerData.value!! > 6.0f || accelerometerData.value!! < -6.0f) {
                 if(weatherInfo.value == "snow"){
                     if(hasSnowBoots){
