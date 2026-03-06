@@ -22,12 +22,11 @@ import java.util.Locale
 
 class WeatherViewModel(private val api: WeatherRepository, application: Application) : AndroidViewModel(application) {
     private val userWeatherDataStore = UserWeatherDataStore(application.applicationContext)
-    val userPrefs = userWeatherDataStore.prefsFlow
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = UserWeatherPrefs()
-        )
+    val userPrefs = userWeatherDataStore.prefsFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = UserWeatherPrefs()
+    )
 
     private val _weatherInfo = MutableStateFlow("Loading weather...")
     val weatherInfo: StateFlow<String> = _weatherInfo.asStateFlow()
@@ -67,6 +66,9 @@ class WeatherViewModel(private val api: WeatherRepository, application: Applicat
                         if (hasSnowBoots) "Get your snow boots. It's snowy!"
                         else "Buy some snow boots. It's snowy!"
                     "rain" in weather ->
+                        if (hasUmbrella) "Get your umbrella. It's rainy!"
+                        else "Buy an umbrella. It's rainy!"
+                    "freezing rain" in weather ->
                         if (hasUmbrella) "Get your umbrella. It's rainy!"
                         else "Buy an umbrella. It's rainy!"
                     else -> "It's a nice day!"

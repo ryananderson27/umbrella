@@ -12,9 +12,7 @@ import com.example.umbrella.models.UserWeatherPrefs
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-private val Context.userWeatherDataStore: DataStore<Preferences> by preferencesDataStore(
-    name = "user_weather_prefs"
-)
+private val Context.userWeatherDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_weather_prefs")
 
 class UserWeatherDataStore(private val context: Context) {
     companion object {
